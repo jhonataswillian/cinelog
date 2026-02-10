@@ -2,7 +2,7 @@
 
 ## Descrição
 
-Cinelog é um sistema de catálogo de filmes desenvolvido em Java utilizando o framework Spring Boot. O projeto tem como objetivo fornecer uma API REST para o gerenciamento de filmes, permitindo operações de cadastro e listagem.
+Cinelog é um sistema de catálogo de filmes desenvolvido em Java utilizando o framework Spring Boot. O projeto tem como objetivo fornecer uma API REST para o gerenciamento completo de filmes (CRUD), permitindo operações de cadastro, listagem, atualização e exclusão.
 
 ## Tecnologias Utilizadas
 
@@ -22,18 +22,22 @@ A API fornece os seguintes endpoints para gerenciamento de filmes:
 
 ### Filmes
 
-- **POST /filmes/cadastrar**: Cadastra um novo filme no catálogo.
+- **POST /filmes**: Cadastra um novo filme no catálogo.
   - O corpo da requisição deve conter um objeto JSON com os campos: `titulo`, `genero`, `nota` e `assistido`.
 - **GET /filmes**: Retorna a lista de todos os filmes cadastrados.
+- **PUT /filmes/{id}**: Atualiza os dados de um filme existente.
+  - Requer o ID na URL e os dados atualizados no corpo da requisição.
+- **DELETE /filmes/{id}**: Remove um filme do catálogo pelo seu ID.
 
 ## Estrutura do Projeto
 
-O projeto segue a arquitetura em camadas padrão do Spring Boot:
+O projeto segue a arquitetura em camadas padrão do Spring Boot, incluindo o uso de DTOs para transferência de dados:
 
 - **Controller**: Camada responsável por expor os endpoints da API (ex: `FilmeController`).
 - **Service**: Camada de regras de negócio (ex: `FilmeService`).
 - **Repository**: Camada de acesso a dados (ex: `FilmeRepository`).
 - **Entity**: Representação das tabelas do banco de dados (ex: `Filme`).
+- **DTO**: Objetos de Transferência de Dados para separar a API do modelo de domínio (ex: `FilmeRequestDTO`, `FilmeResponseDTO`).
 
 ## Como Executar
 
