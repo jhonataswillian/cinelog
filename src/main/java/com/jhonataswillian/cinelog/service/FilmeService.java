@@ -1,5 +1,7 @@
 package com.jhonataswillian.cinelog.service;
 
+import com.jhonataswillian.cinelog.dto.FilmeRequestDTO;
+import com.jhonataswillian.cinelog.dto.FilmeResponseDTO;
 import com.jhonataswillian.cinelog.entity.Filme;
 import com.jhonataswillian.cinelog.infra.exception.FilmeNaoEncontradoException;
 import com.jhonataswillian.cinelog.infra.exception.NotaInvalidaException;
@@ -9,6 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -18,25 +21,33 @@ public class FilmeService {
 
     // CREATE
     @Transactional
-    public Filme cadastrar(Filme filme) {
+    public FilmeResponseDTO cadastrar(FilmeRequestDTO dto) {
 
-        if (filme.getNota() < 0 || filme.getNota() > 10) {
+        if (dto.nota() < 0 || dto.nota() > 10) {
             throw new NotaInvalidaException("Nota inválida!");
         }
 
-        return filmeRepository.save(filme);
+        Filme filme = dto.toEntity();
+        filme = filmeRepository.save(filme);
+        return FilmeResponseDTO.fromEntity(filme);
     }
 
     // READ (ALL)
     @Transactional(readOnly = true)
-    public List<Filme> listarTodos() {
-        return filmeRepository.findAll();
+    public List<FilmeResponseDTO> listarTodos() {
+        return filmeRepository.findAll()
+                .stream()
+                .map(FilmeResponseDTO::fromEntity)
+                .toList();
     }
 
     // READ (SPECIFIC)
     @Transactional(readOnly = true)
-    public List<Filme> buscarPorStatus(Boolean assistido) {
-        return filmeRepository.findByAssistido(assistido);
+    public List<FilmeResponseDTO> buscarPorStatus(Boolean assistido) {
+        return filmeRepository.findByAssistido(assistido)
+                .stream()
+                .map(FilmeResponseDTO::fromEntity)
+                .toList();
     }
 
     // DELETE
@@ -46,23 +57,23 @@ public class FilmeService {
         if (!filmeRepository.existsById(id)) {
             throw new FilmeNaoEncontradoException("Filme não encontrado!");
         }
-
         filmeRepository.deleteById(id);
     }
 
     // UPDATE
     @Transactional
-    public Filme atualizar(Long id, Filme filmeAtualizado) {
+    public FilmeResponseDTO atualizar(Long id, FilmeRequestDTO dto) {
 
         Filme filme = filmeRepository.findById(id)
                 .orElseThrow(() -> new FilmeNaoEncontradoException("Filme não encontrado"));
 
-        filme.setTitulo(filmeAtualizado.getTitulo());
-        filme.setGenero(filmeAtualizado.getGenero());
-        filme.setNota(filmeAtualizado.getNota());
-        filme.setAssistido(filmeAtualizado.getAssistido());
+        filme.setTitulo(dto.titulo());
+        filme.setGenero(dto.genero());
+        filme.setNota(dto.nota());
+        filme.setAssistido(dto.assistido());
+        filme = filmeRepository.save(filme);
 
-        return filmeRepository.save(filme);
+        return FilmeResponseDTO.fromEntity(filme);
 
     }
 }

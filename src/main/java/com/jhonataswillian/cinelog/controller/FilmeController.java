@@ -1,5 +1,7 @@
 package com.jhonataswillian.cinelog.controller;
 
+import com.jhonataswillian.cinelog.dto.FilmeRequestDTO;
+import com.jhonataswillian.cinelog.dto.FilmeResponseDTO;
 import com.jhonataswillian.cinelog.entity.Filme;
 import com.jhonataswillian.cinelog.service.FilmeService;
 import lombok.RequiredArgsConstructor;
@@ -15,12 +17,12 @@ public class FilmeController {
     private final FilmeService filmeService;
 
     @PostMapping
-    public Filme cadastrar(@RequestBody Filme filme) {
+    public FilmeResponseDTO cadastrar(@RequestBody FilmeRequestDTO filme) {
         return filmeService.cadastrar(filme);
     }
 
     @GetMapping
-    public List<Filme> listar() {
+    public List<FilmeResponseDTO> listar() {
         return filmeService.listarTodos();
     }
 
@@ -30,7 +32,7 @@ public class FilmeController {
     }
 
     @PutMapping("/{id}")
-    public Filme atualizar(@PathVariable Long id, @RequestBody Filme filme) {
+    public FilmeResponseDTO atualizar(@PathVariable Long id, @RequestBody FilmeRequestDTO filme) {
         return filmeService.atualizar(id, filme);
     }
 }
